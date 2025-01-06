@@ -68,14 +68,18 @@ std::vector<std::pair<std::string, std::vector<int>>> read_csv(std::string filen
     return result;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     // Read three_cols.csv and ones.csv
     std::vector<std::pair<std::string, std::vector<int>>> three_cols = read_csv("three_cols.csv");
     std::vector<std::pair<std::string, std::vector<int>>> ones = read_csv("ones.csv");
-
+    int size = sizeOf(argv)
+    if (size is == 2)
+    {
+        string filename = str(arv[2])
+        
+    } 
     // Write to another file to check that this was successful
     write_csv("three_cols_copy.csv", three_cols);
-    write_csv("ones_copy.csv", ones);
     
     return 0;
 }
