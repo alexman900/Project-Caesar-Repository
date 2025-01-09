@@ -1,46 +1,139 @@
 import csv
-def read_csv(csvName):
+import requests
+
+def read_csv(csvName,apiCred):
 	# opening the CSV file 
+	csvName = csvName+".csv"
+	print(csvName)
 	with open(csvName, mode ='r')as file: 
 		#list to compare that the field row looks right
 		comparator = ['email', 'time', 'message', 'details', 'bundle']
 		# reading the CSV file 
 		csvFile = csv.reader(file)
 		rows = list(csvFile) 
-		fields = rows[0]
-		
-		del rows[0]
-		
-		print(rows[0],'\n')
-		dictRow = list(rows[0])
-		print(dictRow[3])
-		#detailsSubstring = dict(dictRow[3])
-		#for x in detailsSubstring:
-		#	print(x, "\n")
-		#rowList = list(dictRow.values())
-		#print[rowList]
-	if fields == comparator:
-		print('yes')
-	else:
-		print('no')
-def write_csv(csvName):
-    data = [
-        {'name': 'Nikhil', 'branch': 'COE', 'year': 2, 'cgpa': 9.0},
-        {'name': 'Sanchit', 'branch': 'COE', 'year': 2, 'cgpa': 9.1},
-        {'name': 'Aditya', 'branch': 'IT', 'year': 2, 'cgpa': 9.3},
-        {'name': 'Sagar', 'branch': 'SE', 'year': 1, 'cgpa': 9.5},
-        {'name': 'Prateek', 'branch': 'MCE', 'year': 3, 'cgpa': 7.8},
-        {'name': 'Sahil', 'branch': 'EP', 'year': 2, 'cgpa': 9.1}
-    ]
 
-    with open('university_records.csv', 'w', newline='') as csvfile:
-        fieldnames = ['name', 'branch', 'year', 'cgpa']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(data)
+		#update the fields row to make sure this file at least seems valid
+		fields = rows[0]
+		#remove the fields row
+		del rows[0]
+
+	if fields == comparator:
+		return updateRows(rows,apiCred)
+	else:
+		print('front fields do not match')
+		return None
+
+#takes all rows with the field removed, makes the api calls,
+# updates the info, and returns a new array
+def updateRows(rows,apiCred):
+	newListData =[]
+	for i, x in enumerate(rows):
+		temprow = list(x)
+		if temprow[2] == "Clicked Link" or temprow[2] == "Email Opened":
+			IP = str(identifyIP(x[3]))
+			#print("Line ", (i+1),": ", IP)
+			templist = list(get_posts(IP,apiCred))
+			temprow.extend(templist)
+			temprow = reformat(temprow)
+
+			newListData.append(temprow)
+		else:
+			listEmpty = ["","",""]
+			temprow.extend(listEmpty)
+			temprow = reformat(temprow)
+			newListData.append(temprow)
+
+	return newListData
+
+def reformat(templist):
+	#fieldnames = ['status/message','ip', 'modified_date/time', 'email','hosted','company_name','details', 'bundle']
+	#comparator = ['email', 'modified_date/time', 'status/message, 'details', 'bundle',ip,hosted,companyName]
+	#swap email and status/message	
+	templist[0], templist[2] = templist[2], templist[0];
+	#swap modified_date/time and ip	
+	templist[1], templist[5] = templist[5], templist[1];
+	#swap email and modified_date/time
+	templist[2], templist[5] = templist[5], templist[2];
+	#swap email and 
+	templist[3], templist[5] = templist[5], templist[3];
+	#swap status/message and modified_date/time
+	templist[4], templist[6] = templist[6], templist[4];
+	#['status/message','ip', 'modified_date/time', 'email','hosted',details, bundle, company
+	templist[5], templist[7] = templist[7], templist[5];
+	templist[6], templist[7] = templist[6], templist[7];
+	return templist
+
+
+#takes a row and extracts and returns the Ip out of it's message column
+def identifyIP(row):
+	detailsSubstring = str(row)
+	detailsList = detailsSubstring.split(":")
+	untrimmedIPuseragent = detailsList[4].split(",")
+	untrimmedIP=untrimmedIPuseragent[0].split("\"")
+	IP=untrimmedIP[1]
+	return IP
+
+
+
+def get_posts(ipName, apiCred):
+	# Define the API endpoint URL
+	print(ipName)
+	url = 'https://api.ipapi.is/?q=' 
+	keyString = '&key='
+	API_Call=url+ipName+keyString+apiCred
+
+	try:
+		# Make a GET request to the API endpoint using requests.get()
+		response = requests.get(API_Call)
+		# Check if the request was successful (status code 200)
+		if response.status_code == 200:
+			#create a dictionary of the json response
+			json = response.json()
+			#break that dictionary up into its corresponding values
+			posts = list(json.values())
+			#value 1 is the ip searched
+			ip = posts[0]
+			#value 6 is a boolen of hosted or not
+			hosted = posts[5]
+
+			#convert the company string to a dictionary,
+			
+			dictCompany = dict(posts[10])
+				
+			#split it into values
+			listOfCompany = list(dictCompany.values())
+			
+			#set the first value as the company name
+			companyName=listOfCompany[0]
+			
+			releventData = [ip,hosted,companyName]
+			print(releventData)
+			return releventData
+		else:
+			print('Error:', response.status_code)
+			return None
+	except requests.exceptions.RequestException as e:
+		print('Error:', e)
+		return None
+
+
+
+def write_csv(csvName, data):
+
+	newCSVName = csvName + "_with_Hosting_Marked.csv"
+	for x in data: 
+		fieldnames = ['status/message','ip', 'modified_date/time', 'email','hosted','company_name','details', 'bundle']
+		
+	with open(newCSVName, 'w') as csvfile:
+		writer = csv.writer(csvfile)
+		writer.writerow(fieldnames)
+		writer.writerows(data)
 
 def main():
-        CSV_Name = 'Sample Events File.csv'
-        read_csv(CSV_Name)
+	credentials = 'bdc187a2729c45ed'
+	CSV_Name = 'Real_Events_File'
+	newListData = read_csv(CSV_Name,credentials)
+	write_csv(CSV_Name,newListData)
+
 if 1 == 1.0:
-        main()
+	main()
