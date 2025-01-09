@@ -37,11 +37,12 @@ def updateRows(rows,apiCred):
 			temprow = reformat(temprow)
 
 			newListData.append(temprow)
-		else:
+		else if temprow[2] == "Email Sent"
 			listEmpty = ["","",""]
 			temprow.extend(listEmpty)
 			temprow = reformat(temprow)
 			newListData.append(temprow)
+	
 
 	return newListData
 
