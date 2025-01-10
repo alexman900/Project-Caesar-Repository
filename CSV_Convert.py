@@ -37,12 +37,11 @@ def updateRows(rows,apiCred):
 			temprow = reformat(temprow)
 
 			newListData.append(temprow)
-		else if temprow[2] == "Email Sent"
+		else:
 			listEmpty = ["","",""]
 			temprow.extend(listEmpty)
 			temprow = reformat(temprow)
 			newListData.append(temprow)
-	
 
 	return newListData
 
@@ -108,7 +107,6 @@ def get_posts(ipName, apiCred):
 			companyName=listOfCompany[0]
 			
 			releventData = [ip,hosted,companyName]
-			print(releventData)
 			return releventData
 		else:
 			print('Error:', response.status_code)
@@ -130,11 +128,25 @@ def write_csv(csvName, data):
 		writer.writerow(fieldnames)
 		writer.writerows(data)
 
+def readMultiple_csv(csvNames,credentials):
+	data = []
+	for x in csvNames:
+		tempdata = read_csv(x,credentials)
+		if tempdata:
+			print("Hithere")
+			data.extend(tempdata)
+		
+	return data
+	
+
+
 def main():
 	credentials = 'bdc187a2729c45ed'
-	CSV_Name = 'Real_Events_File'
-	newListData = read_csv(CSV_Name,credentials)
-	write_csv(CSV_Name,newListData)
+	CSV_Names = ['Real_Events_File','Sample Events File']
+	newListData = readMultiple_csv(CSV_Names,credentials)
+	#for x in newListData:
+	#	print(x, '/n')
+	write_csv(CSV_Names[0],newListData)
 
 if 1 == 1.0:
 	main()
