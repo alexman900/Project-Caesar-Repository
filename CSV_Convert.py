@@ -76,6 +76,13 @@ def identifyIP(row):
 	IP=untrimmedIP[1]
 	return IP
 
+def identifyUserAgent(row):
+	detailsSubstring = str(row)
+	detailsList = detailsSubstring.split(":")
+	untrimmedIPuseragent = detailsList[4].split(",")
+	untrimmedIP=untrimmedIPuseragent[0].split("\"")
+	Agent=untrimmedIP[1]
+	return Agent=
 
 
 def get_posts(ipName, apiCred):
