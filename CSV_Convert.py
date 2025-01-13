@@ -232,9 +232,26 @@ def printHelpMethod():
 # main class to
 def main():
 	
-	
+	n = len(sys.argv)
+	args = list(sys.argv)
 	credentials = 'bdc187a2729c45ed'
-	CSV_Names = ['Real_Events_File','Sample Events File']
+	if len(args) > 1:
+		returnlist = parseCommandLine(args)
+		if len(returnlist) > 1:
+			CSV_Names= returnlist[0]
+			
+			print("FileList: \n",returnlist[0])
+			credentials = returnlist[1]
+			print("NewAPICredentials: ",returnlist[1])
+		else:
+			CSV_Names= returnlist[0]
+			print("FileList: \n",returnlist[0])
+			
+	else:
+		printHelpMethod()
+
+	
+	
 	newListData = readMultiple_csv(CSV_Names,credentials)
 	#for x in newListData:
 	#	print(x, '/n')
