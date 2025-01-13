@@ -7,7 +7,7 @@ import os.path
 def read_csv(csvName,apiCred):
 	# opening the CSV file 
 	csvName = csvName+".csv"
-	print(csvName)
+	
 	with open(csvName, mode ='r')as file: 
 		#list to compare that the field row looks right
 		comparator = ['email', 'time', 'message', 'details', 'bundle']
@@ -34,14 +34,15 @@ def updateRows(rows,apiCred):
 		temprow = list(x)
 		if temprow[2] == "Clicked Link" or temprow[2] == "Email Opened":
 			IP = str(identifyIP(x[3]))
-			#print("Line ", (i+1),": ", IP)
-			templist = list(get_posts(IP,apiCred))
+			userAgent = str(identifyUserAgent(x[3]))
+			#print("Line ", (i+1),": ", IP, userAgent)
+			templist = list(get_posts(IP,apiCred, userAgent))
 			temprow.extend(templist)
 			temprow = reformat(temprow)
 
 			newListData.append(temprow)
 		else:
-			listEmpty = ["","",""]
+			listEmpty = ["","","",""]
 			temprow.extend(listEmpty)
 			temprow = reformat(temprow)
 			newListData.append(temprow)
@@ -49,8 +50,8 @@ def updateRows(rows,apiCred):
 	return newListData
 
 def reformat(templist):
-	#fieldnames = ['status/message','ip', 'modified_date/time', 'email','hosted','company_name','details', 'bundle']
-	#comparator = ['email', 'modified_date/time', 'status/message, 'details', 'bundle',ip,hosted,companyName]
+	#fieldnames = ['status/message','ip', 'modified_date/time', 'email','hosted','company_name',' user agent', 'details', 'bundle']
+	#comparator = ['email', 'modified_date/time', 'status/message, 'details', 'bundle',ip,hosted,companyName, user agent]
 	#swap email and status/message	
 	templist[0], templist[2] = templist[2], templist[0];
 	#swap modified_date/time and ip	
@@ -64,6 +65,9 @@ def reformat(templist):
 	#['status/message','ip', 'modified_date/time', 'email','hosted',details, bundle, company
 	templist[5], templist[7] = templist[7], templist[5];
 	templist[6], templist[7] = templist[6], templist[7];
+	templist[6], templist[7] = templist[6], templist[7];
+	templist[6], templist[8] = templist[8], templist[6];
+	templist[7], templist[8] = templist[8], templist[7];
 	return templist
 
 
@@ -79,15 +83,14 @@ def identifyIP(row):
 def identifyUserAgent(row):
 	detailsSubstring = str(row)
 	detailsList = detailsSubstring.split(":")
-	untrimmedIPuseragent = detailsList[4].split(",")
-	untrimmedIP=untrimmedIPuseragent[0].split("\"")
-	Agent=untrimmedIP[1]
-	return Agent=
+	untrimmedUseragent = detailsList[5].split("\"")
+	Agent=untrimmedUseragent[1]
+	return Agent
 
 
-def get_posts(ipName, apiCred):
+def get_posts(ipName, apiCred, userAgent):
 	# Define the API endpoint URL
-	print(ipName)
+	#print(ipName)
 	url = 'https://api.ipapi.is/?q=' 
 	keyString = '&key='
 	API_Call=url+ipName+keyString+apiCred
@@ -116,7 +119,7 @@ def get_posts(ipName, apiCred):
 			#set the first value as the company name
 			companyName=listOfCompany[0]
 			
-			releventData = [ip,hosted,companyName]
+			releventData = [ip,hosted,companyName,userAgent]
 			return releventData
 		else:
 			print('Error:', response.status_code)
@@ -131,7 +134,7 @@ def write_csv(csvName, data):
 
 	newCSVName = csvName + "_with_Hosting_Marked.csv"
 	for x in data: 
-		fieldnames = ['status/message','ip', 'modified_date/time', 'email','hosted','company_name','details', 'bundle']
+		fieldnames = ['status/message','ip', 'modified_date/time', 'email','hosted','company_name','user_agent','bundles', 'details']
 		
 	with open(newCSVName, 'w') as csvfile:
 		writer = csv.writer(csvfile)
@@ -144,7 +147,6 @@ def readMultiple_csv(csvNames,credentials):
 	for x in csvNames:
 		tempdata = read_csv(x,credentials)
 		if tempdata:
-			print("Hithere")
 			data.extend(tempdata)
 		
 	return data
