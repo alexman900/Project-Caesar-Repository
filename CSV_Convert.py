@@ -1,4 +1,5 @@
 import csv
+import sys
 import requests
 
 def read_csv(csvName,apiCred):
@@ -116,7 +117,7 @@ def get_posts(ipName, apiCred):
 		return None
 
 
-
+#take a .csv passed as a filename and a data element and write  it to a file named after the csv file
 def write_csv(csvName, data):
 
 	newCSVName = csvName + "_with_Hosting_Marked.csv"
@@ -128,6 +129,7 @@ def write_csv(csvName, data):
 		writer.writerow(fieldnames)
 		writer.writerows(data)
 
+#recursive class to call read_csv on mutiple csv files and append the results into one data List for writing
 def readMultiple_csv(csvNames,credentials):
 	data = []
 	for x in csvNames:
@@ -139,8 +141,10 @@ def readMultiple_csv(csvNames,credentials):
 	return data
 	
 
-
+# main class to
 def main():
+	
+	
 	credentials = 'bdc187a2729c45ed'
 	CSV_Names = ['Real_Events_File','Sample Events File']
 	newListData = readMultiple_csv(CSV_Names,credentials)
