@@ -6,6 +6,7 @@ import os.path
 
 def read_csv(csvName,apiCred):
 	# opening the CSV file 
+	csvNamecheck =csvName
 	csvName = csvName+".csv"
 	
 	with open(csvName, mode ='r')as file: 
@@ -21,10 +22,26 @@ def read_csv(csvName,apiCred):
 		del rows[0]
 
 	if fields == comparator:
-		return updateRows(rows,apiCred)
+		data= updateRows(rows,apiCred)
+		if data:
+			print(csvName, " read successfully")
+		else:
+			print(csvName, " could not be read")
+			
+		return data
 	else:
 		print('front fields do not match')
 		return None
+		
+def checkCSVName(csvName):
+	if "." in (str(csvName)):
+		Namecheck=(str(cvsName)).split(".")
+		return str(Namecheck[0])
+	else
+		return str(csvName)
+	
+
+	
 
 #takes all rows with the field removed, makes the api calls,
 # updates the info, and returns a new array
@@ -110,9 +127,9 @@ def get_posts(ipName, apiCred, userAgent):
 			hosted = posts[5]
 
 			#convert the company string to a dictionary,
-			
+			if()
 			dictCompany = dict(posts[10])
-				
+			print ("I'm MR Helper PRint LOOK AT ME: ", dictCompany)
 			#split it into values
 			listOfCompany = list(dictCompany.values())
 			
@@ -173,13 +190,13 @@ def parseCommandLine(argv):
 
 	while len(templist) >= 2:
 		if (str(templist[0]) == "-f"):
-			if os.path.isfile((str(templist[1]) + ".csv")):
-				filelist.append(str(templist[1]))
-				print((str(templist[1]) + ".csv"), " exists")
+			if os.path.isfile((checkCSVName(templist[1]) + ".csv")):
+				filelist.append(checkCSVName(templist[1]))
+				print(checkCSVName(templist[1]) + ".csv"), " exists")
 				del templist[0]
 				del templist[0]
 			else:
-				print((str(templist[1]) + ".csv"), " does not exist")
+				print(checkCSVName(templist[1]) + ".csv"), " does not exist")
 				del templist[0]
 				del templist[0]
 
@@ -188,12 +205,12 @@ def parseCommandLine(argv):
 				FileCount = (int(templist[1]))
 				i = 0;
 				while i < FileCount:
-					if os.path.isfile((str(templist[i+2]) + ".csv")):
-						print((str(templist[i+2]) + ".csv"), " exists")
-						filelist.append(str(templist[i+2]))
+					if os.path.isfile(checkCSVName(templist[i+2]) + ".csv")):
+						print((checkCSVName(templist[i+2]) + ".csv"), " exists")
+						filelist.append(checkCSVName(templist[i+2]))
 						i = i+1
 					else:
-						print((str(templist[i+2]) + ".csv"), " does not exist")
+						print((checkCSVName(templist[i+2]) + ".csv"), " does not exist")
 						i = i+1
 				i = 0;
 				while i < FileCount:
@@ -243,6 +260,7 @@ def main():
 	
 	n = len(sys.argv)
 	args = list(sys.argv)
+	newListData = []
 	credentials = 'bdc187a2729c45ed'
 	if len(args) > 1:
 		returnlist = parseCommandLine(args)
@@ -255,16 +273,12 @@ def main():
 		else:
 			CSV_Names= returnlist[0]
 			print("FileList: \n",returnlist[0])
-			
+
+		newListData = readMultiple_csv(CSV_Names,credentials)
+		write_csv(CSV_Names[0],newListData)
 	else:
 		printHelpMethod()
-
 	
-	
-	newListData = readMultiple_csv(CSV_Names,credentials)
-	#for x in newListData:
-	#	print(x, '/n')
-	write_csv(CSV_Names[0],newListData)
 
 if 1 == 1.0:
 	main()
