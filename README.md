@@ -14,11 +14,11 @@ The two methods of facilitating this are
   With a working python environment available:
       Single .csv File: 
             Run the following command
-            python3 CSV_Convert.py [filename]
+            python3 CSV_Convert.py -f [filename]
             NOTE: Do not add .csv to the end of the name just give the exact name it has
       Mutiple .csv Files:
             Run the following command
-            python3 CSV_Convert.py [filename1], [filename2],...
+            python3 CSV_Convert.py -fs [filename1], [filename2],...
             NOTE: Do not add .csv to the end of the name just give the exact name it has
       The script takes about 2 seconds per call so for a project with 500 clicked link and email opened events it would take about 15 minutes to run.
       After that all that's needed from the ISA is to determine if the user agent is modern or outdated 
