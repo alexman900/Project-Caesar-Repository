@@ -35,13 +35,11 @@ def read_csv(csvName,apiCred):
 		
 def checkCSVName(csvName):
 	if "." in (str(csvName)):
-		Namecheck=(str(cvsName)).split(".")
+		Namecheck=(str(csvName)).split(".")
 		return str(Namecheck[0])
-	else
-		return str(csvName)
-	
 
-	
+	else:
+		return str(csvName)	
 
 #takes all rows with the field removed, makes the api calls,
 # updates the info, and returns a new array
@@ -127,7 +125,6 @@ def get_posts(ipName, apiCred, userAgent):
 			hosted = posts[5]
 
 			#convert the company string to a dictionary,
-			if()
 			dictCompany = dict(posts[10])
 			print ("I'm MR Helper PRint LOOK AT ME: ", dictCompany)
 			#split it into values
@@ -192,11 +189,11 @@ def parseCommandLine(argv):
 		if (str(templist[0]) == "-f"):
 			if os.path.isfile((checkCSVName(templist[1]) + ".csv")):
 				filelist.append(checkCSVName(templist[1]))
-				print(checkCSVName(templist[1]) + ".csv"), " exists")
+				print((checkCSVName(templist[1]) + ".csv"), " exists")
 				del templist[0]
 				del templist[0]
 			else:
-				print(checkCSVName(templist[1]) + ".csv"), " does not exist")
+				print((checkCSVName(templist[1]) + ".csv"), " does not exist")
 				del templist[0]
 				del templist[0]
 
@@ -205,7 +202,7 @@ def parseCommandLine(argv):
 				FileCount = (int(templist[1]))
 				i = 0;
 				while i < FileCount:
-					if os.path.isfile(checkCSVName(templist[i+2]) + ".csv")):
+					if os.path.isfile(checkCSVName(templist[i+2]) + ".csv"):
 						print((checkCSVName(templist[i+2]) + ".csv"), " exists")
 						filelist.append(checkCSVName(templist[i+2]))
 						i = i+1
@@ -282,3 +279,4 @@ def main():
 
 if 1 == 1.0:
 	main()
+
