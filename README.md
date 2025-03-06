@@ -20,9 +20,22 @@ The two methods of facilitating this are
   Assign the api Credentials to use on this call
     -c [API Credential]
   
-  The script takes about 2 seconds per call so for a project with 500 clicked link and email opened events it would take about 15 minutes to run.
+  The script at most takes about 2 seconds per call so for a project with 500 clicked link and email opened events it would take about 15 minutes to run. (It may run faster or slower depending on your network bandwidth)
       After that all that's needed from the ISA is to determine if the user agent is modern or outdated 
         I would highly advise sorting by the user agent field as most of the user agents will be similar or identical and you should usually have under 100 unique user agents even on a large project
+
+#Anecdote on processing results:
+
+  The script has a few known bugs and a few datacenters that will show up as false even when they are hosted. Genrally the best tool for distinguishing these results is the user agent string
+    example:
+        you have 20+ user agent strings that match all from the same IP and all the events occurred at right after the email was sent 
+        verdict: Clear false positive
+
+  The script will also always show VPS as hosted so sometimes you will have 
+
+
+  
+
 
   
       
