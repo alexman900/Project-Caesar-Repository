@@ -2,6 +2,7 @@ import csv
 import sys
 import requests
 import os.path
+from collections.abc import Iterable
 
 
 def read_csv(csvName,apiCred):
@@ -106,13 +107,15 @@ def identifyUserAgent(row):
 def get_posts(ipName, apiCred, userAgent):
 	# Define the API endpoint URL
 	#print(ipName)
-	url = 'https://api.ipapi.is/?q=' 
+	url = 'https://api.ipapi.is?q=' 
 	keyString = '&key='
 	API_Call=url+ipName+keyString+apiCred
+	timeout=10
+	print(API_Call)
 
 	try:
 		# Make a GET request to the API endpoint using requests.get()
-		response = requests.get(API_Call)
+		response = requests.get(API_Call, timeout)
 		# Check if the request was successful (status code 200)
 		if response.status_code == 200:
 			#create a dictionary of the json response
@@ -122,25 +125,41 @@ def get_posts(ipName, apiCred, userAgent):
 			#value 1 is the ip searched
 			ip = posts[0]
 			#value 6 is a boolen of hosted or not
-			hosted = posts[5]
+			hosted = posts[6]
 
 			#convert the company string to a dictionary,
-			dictCompany = dict(posts[10])
-			print ("I'm MR Helper PRint LOOK AT ME: ", dictCompany)
-			#split it into values
-			listOfCompany = list(dictCompany.values())
-			
+			if isinstance(posts[10], Iterable):
+				dictCompany = dict(posts[10])
+				listOfCompany = list(dictCompany.values())
+			else:
+				if isinstance(posts[11], Iterable):
+					dictCompany = dict(posts[11])
+					listOfCompany = list(dictCompany.values())
+				else:
+					if isinstance(posts[12], Iterable):
+						dictCompany = dict(posts[12])
+						listOfCompany = list(dictCompany.values())
+					else:
+						print("Error 1 unhandled API case for: ", ip)
+						listOfCompany = ["Unknown"]
 			#set the first value as the company name
 			companyName=listOfCompany[0]
 			
 			releventData = [ip,hosted,companyName,userAgent]
 			return releventData
 		else:
-			print('Error:', response.status_code)
+			print('Error whoa:', response.status_code)
 			return None
 	except requests.exceptions.RequestException as e:
-		print('Error:', e)
+		print('Error whoao:', e)
 		return None
+
+
+
+
+
+
+
 
 
 #take a .csv passed as a filename and a data element and write  it to a file named after the csv file
@@ -171,6 +190,7 @@ def readMultiple_csv(csvNames,credentials):
 
 def parseCommandLine(argv):
 	templist = list(argv)
+	noFileList = False;
 	print(templist)
 	del templist[0]
 	APICredential = "empty"
@@ -233,10 +253,21 @@ def parseCommandLine(argv):
 		else:
 			print("Error ", templist[0], " is not a valid argument /n Please use -h to get the list of valid arguments")
 			templist.clear()
-	if APICredential == "empty":
+		
+	if len(filelist) < 1:
+		fileListExists = 1
+		returnList.append(fileListExists)
+	
+	
+	elif APICredential == "empty":
+		fileListExists = 2
+		returnList.append(fileListExists)
 		returnList.append(filelist)
+		
 
 	else:
+		fileListExists = 3
+		returnList.append(fileListExists)
 		returnList.append(filelist)
 		returnList.append(APICredential)	
 		
@@ -259,24 +290,26 @@ def main():
 	args = list(sys.argv)
 	newListData = []
 	credentials = 'bdc187a2729c45ed'
-	if len(args) > 1:
+	if len(args) >= 2:
 		returnlist = parseCommandLine(args)
-		if len(returnlist) > 1:
-			CSV_Names= returnlist[0]
-			
-			print("FileList: \n",returnlist[0])
-			credentials = returnlist[1]
-			print("NewAPICredentials: ",returnlist[1])
-		else:
-			CSV_Names= returnlist[0]
-			print("FileList: \n",returnlist[0])
-
-		newListData = readMultiple_csv(CSV_Names,credentials)
-		write_csv(CSV_Names[0],newListData)
+		if returnlist[0] == 3:
+			CSV_Names= returnlist[1]
+			print("FileList: \n",returnlist[1])
+			credentials = returnlist[2]
+			print("NewAPICredentials: ",returnlist[2])
+			newListData = readMultiple_csv(CSV_Names,credentials)
+			write_csv(CSV_Names[0],newListData)
+		
+		elif returnlist[0] == 2:
+			CSV_Names= returnlist[1]
+			print("FileList: \n",returnlist[1])
+			newListData = readMultiple_csv(CSV_Names,credentials)
+			write_csv(CSV_Names[0],newListData)
+	
+	
 	else:
 		printHelpMethod()
 	
 
 if 1 == 1.0:
 	main()
-
