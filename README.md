@@ -9,6 +9,16 @@ The two methods of facilitating this are
       Download the script and put it in a new folder on the vm with any .csv files you wish to convert
   With any python Runtime environment
       Ensure that the script and any .csv files you wish to convert are in a single folder
+
+API Credentials:
+    In order to use this program effectively you should register a free account with ipapi.is to allow you to utilize your own API credential rather than the default API cred associated with developer.
+    to do this
+    1.go to Ipapi.is
+    2.select sign up in the top right of the page
+    3. enter the relevent information and create an account
+    4. logging in should then take you to the home section of the platform. Your API credential should be listed under its own category
+    5. Utilize -c [YOUR API CREDENTIAL HERE] as in argument in any subsequent API calls you make.
+
       
 #Usage:
   With a working python environment available:
@@ -32,6 +42,10 @@ The two methods of facilitating this are
         verdict: Clear false positive
 
   The script will also always show VPS as hosted so sometimes you will have 
+
+
+
+  
 
 
   
