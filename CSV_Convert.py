@@ -126,6 +126,9 @@ def get_posts(ipName, apiCred, userAgent):
 			ip = posts[0]
 			#value 6 is a boolen of hosted or not
 			hosted = posts[6]
+			#value 9 is the value of whether the call is a vpn or not
+			vpn = posts[9]
+			print(posts[9])
 
 			#convert the company string to a dictionary,
 			if isinstance(posts[10], Iterable):
