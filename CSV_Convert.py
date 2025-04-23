@@ -84,6 +84,14 @@ def reformat(templist):
 	templist[6], templist[7] = templist[6], templist[7];
 	templist[6], templist[8] = templist[8], templist[6];
 	templist[7], templist[8] = templist[8], templist[7];
+	#fieldname status = ['status/message','ip', 'modified_date/time', 'email','hosted','company_name',' user agent', 'details', 'bundle',vpn]
+	templist[8], templist[9] = templist[9], templist[8];
+	templist[7], templist[8] = templist[8], templist[7];
+	templist[6], templist[7] = templist[7], templist[6];
+	templist[5], templist[6] = templist[6], templist[5];
+	#fieldname status = ['status/message','ip', 'modified_date/time', 'email','hosted','vpn','company_name',' user agent', 'details', 'bundle']
+	
+	
 	return templist
 
 
@@ -127,9 +135,8 @@ def get_posts(ipName, apiCred, userAgent):
 			#value 6 is a boolen of hosted or not
 			hosted = posts[6]
 			#value 9 is the vpn or not bool?
-			print("VPN8?:"posts[8])
-			print("VPN9?:"posts[9])
-			print("VPN10?:"posts[10])
+			vpn = posts[9]
+			
 
 			#convert the company string to a dictionary,
 			if isinstance(posts[10], Iterable):
@@ -149,7 +156,7 @@ def get_posts(ipName, apiCred, userAgent):
 			#set the first value as the company name
 			companyName=listOfCompany[0]
 			
-			releventData = [ip,hosted,companyName,userAgent]
+			releventData = [ip,hosted,companyName,userAgent,vpn]
 			return releventData
 		else:
 			print('Error whoa:', response.status_code)
@@ -171,7 +178,7 @@ def write_csv(csvName, data):
 
 	newCSVName = csvName + "_with_Hosting_Marked.csv"
 	for x in data: 
-		fieldnames = ['status/message','ip', 'modified_date/time', 'email','hosted','company_name','user_agent','bundles', 'details']
+		fieldnames = ['status/message','ip', 'modified_date/time', 'email','hosted','vpn','company_name','user_agent','bundles', 'details']
 		
 	with open(newCSVName, 'w') as csvfile:
 		writer = csv.writer(csvfile)
