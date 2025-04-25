@@ -292,6 +292,7 @@ def main():
 	n = len(sys.argv)
 	args = list(sys.argv)
 	newListData = []
+	#If you wante to hardcode the API Credentials to your own change the line below to your API credentials
 	credentials = 'bdc187a2729c45ed'
 	if len(args) >= 2:
 		returnlist = parseCommandLine(args)
