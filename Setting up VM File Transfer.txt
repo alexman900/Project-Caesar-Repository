@@ -1,0 +1,32 @@
+VMWare
+ 
+Copy and Paste
+  If copy and paste does not work follow this guide:
+    https://www.kali.org/docs/virtualization/install-vmware-guest-tools/
+ 
+    after running every command and rebooting close vmware and restart it
+    Drag and drop still will not work but copy and paste will
+    To copy and paste within the vm make sure you are right clicking and selecting copy or past as ctrl + V and ctrl + c may not work
+ 
+Shared Folder
+  Doesn't work
+Drag and Drop
+  Doesn't work
+ 
+ 
+Oracle Virtual Box
+ 
+Shared Folder
+  Launch your Kali vm
+  In the bottom right select the greyed out file folder image
+  Right click it and select Shared Folder Settings
+  Select Shared Folders from the menu on the left
+  In the top right click the folder image with a green + sign to add a shared folder
+  Left click the dropdown menu for folder Path and select Other…
+  Select or create a shared folder from your home system to use to move files back and forth between the vm and your machine
+  Check the Auto-mount option
+  Select OK
+  Your folder should now be accessible under devices within the file explorer of kali
+ 
+Copy and paste/bidirectional drag and drop
+  Doesn't work
