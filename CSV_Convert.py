@@ -1,3 +1,15 @@
+'''
+Author: alexman900
+File Purpose: This file is designed to take a bulk .csv export of interactions and transform them into a more useful .csv file with additional information on the ip that triggered the interaction
+
+
+Current information gathered on IPs: currently the script gathers and displays the following additional data on each IP provided:
+	Hosted - This boolean indicates whether the IP is owned by a known data center (True) or not (False) using the Ipapi API. Some data center Ips will show up as false due to the api's limitations, these can be double checked against ipinfo as needed as IPinfo tends to be more accurate on this front
+	VPN: This boolean indicates whether the IP is a known VPN (True) or not (False) using the Ipapi API. It is fairly inaccurate but useful when dealing with a lot of vpn results.
+ 	Company Name - This string indicates the company that owns the targeted IP it is almost 100% accurate but may soemtimes show subsidiaries or shell companies in the case of VPNs.
+  		Anecdote: Cloudfare and Microsoft are the most common two Hosting companies for VPNs
+'''
+
 import csv
 import sys
 import requests
@@ -150,11 +162,19 @@ def get_posts(ipName, apiCred, userAgent):
 			
 			releventData = [ip,hosted,companyName,userAgent]
 			return releventData
-		else:
-			print('Error whoa:', response.status_code)
+		elif response.status_code == 403
+			print('Error the api call:', API_Call, '\n returned error code : ') response.status_code, '\n this indicates that the IPAPI server recognizes this call but refused to return results.)
+			print('This is likely means that the API key you are using has exceeded its 1000 call per day capacity.\nIf you are using the default credential, please register a free api key at https://ipapi.is/app/signup to use with the -c command or hardcode the default to be your api key')
+			print('if you are not using the default key and believe you have not exceeded the 1000 call limit (eg your csv files did not have a total count of 1000 lines with a user agent field), this may be caused by operating on an ip which you did not register the account on try disconnecting from a vpn or connecting to ours')
+			return None
+		elif response.status_code == 503
+			print('Error the api call:', API_Call, ' returned an error response code: ') response.status_code, '\n this indicates that the IPAPI.is servers are down.\n You can confirm this at https://ipapi.is/app/request-builder by checking if their test api "Try It" option is working.)
+			return None
+		else 
+			print('Error the api call:', API_Call, ' returned an error response code: ') response.status_code, 'Something has gone wildly wrong. Please contact alexman900 for assistance')
 			return None
 	except requests.exceptions.RequestException as e:
-		print('Error whoao:', e)
+		print('Error: ', e,'\nTry catch block failed for getposts function. Please contact alexman900 for assistance:')
 		return None
 
 
@@ -190,8 +210,16 @@ def readMultiple_csv(csvNames,credentials):
 
 
 
-
+#command line parser functions
 def parseCommandLine(argv):
+	"""
+	this is a test does this show in hover
+
+ 	Args:
+  		argv (array): this is the first arg
+    	Returns:
+     		array: the array result of command line args
+ 	"""
 	templist = list(argv)
 	noFileList = False;
 	print(templist)
@@ -239,7 +267,7 @@ def parseCommandLine(argv):
 				del templist[0]
 				del templist[0]
 			else:
-				print("error 2nd arg in -fs was not a number greater than 0")				
+				print("Error 2nd arg in -fs was not a number greater than 0")				
 				templist.clear()
 							
 
@@ -286,7 +314,7 @@ def printHelpMethod():
 	print("\t -c [API Credential]\t\t Define an API Credential besides the default")
 	print("\t -h help method")
 
-# main class to
+# main class to run the actual code
 def main():
 	
 	n = len(sys.argv)
